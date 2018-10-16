@@ -15,7 +15,7 @@ public class StateMachineBuilderIntegrationTest {
     builder.configureTransitions().withExternal().source("SI").target("S1").event("E1").and()
         .withExternal().source("S1").target("SF").event("E2");
 
-    StateMachine machine = builder.build();
+    StateMachine<String, String> machine = builder.build();
 
     machine.start();
 
