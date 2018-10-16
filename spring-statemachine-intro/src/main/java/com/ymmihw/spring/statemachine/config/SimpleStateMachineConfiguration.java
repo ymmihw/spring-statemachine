@@ -30,7 +30,7 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
   @Override
   public void configure(StateMachineStateConfigurer<String, String> states) throws Exception {
     states.withStates().initial("SI").end("SF").states(new HashSet<>(Arrays.asList("S1", "S2")))
-        .stateEntry("S3", entryAction()).stateExit("S3", exitAction())
+        .stateEntry("S3", entryAction()).stateDo("S3", doAction()).stateExit("S3", exitAction())
         .state("S4", executeAction(), errorAction()).stateDo("S5", executeAction());
 
   }
@@ -56,18 +56,23 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
 
   @Bean
   public Action<String, String> entryAction() {
-    return ctx -> LOGGER.info("Entry " + ctx.getTarget().getId());
+    return ctx -> LOGGER.info("Entry {}", ctx.getTarget().getId());
   }
 
   @Bean
   public Action<String, String> doAction() {
-    return ctx -> LOGGER.info("Do " + ctx.getTarget().getId());
+    return ctx -> LOGGER.info("Do {}", ctx.getTarget().getId());
+  }
+
+  @Bean
+  public Action<String, String> exitAction() {
+    return ctx -> LOGGER.info("Exit {} -> {}", ctx.getSource().getId(), ctx.getTarget().getId());
   }
 
   @Bean
   public Action<String, String> executeAction() {
     return ctx -> {
-      LOGGER.info("Execute " + ctx.getTarget().getId());
+      LOGGER.info("Execute {}", ctx.getTarget().getId());
       int approvals = (int) ctx.getExtendedState().getVariables().getOrDefault("approvalCount", 0);
       approvals++;
       ctx.getExtendedState().getVariables().put("approvalCount", approvals);
@@ -75,13 +80,8 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
   }
 
   @Bean
-  public Action<String, String> exitAction() {
-    return ctx -> LOGGER.info("Exit " + ctx.getSource().getId() + " -> " + ctx.getTarget().getId());
-  }
-
-  @Bean
   public Action<String, String> errorAction() {
-    return ctx -> LOGGER.info("Error " + ctx.getSource().getId() + ctx.getException());
+    return ctx -> LOGGER.info("Error {}{}", ctx.getSource().getId(), ctx.getException());
   }
 
   @Bean

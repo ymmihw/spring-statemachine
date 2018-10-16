@@ -11,7 +11,8 @@ public class StateMachineListener<S, E> extends StateMachineListenerAdapter<S, E
 
   @Override
   public void stateChanged(State<S, E> from, State<S, E> to) {
-    LOGGER.info(String.format("Transitioned from %s to %s%n", from == null ? "none" : from.getId(),
-        to.getId()));
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.info("Transitioned from {} to {}", from == null ? "none" : from.getId(), to.getId());
+    }
   }
 }
