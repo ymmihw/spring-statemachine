@@ -2,7 +2,8 @@ package com.ymmihw.spring.statemachine.config;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.action.Action;
@@ -18,7 +19,7 @@ import org.springframework.statemachine.guard.Guard;
 public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapter<String, String> {
 
   public static final Logger LOGGER =
-      Logger.getLogger(SimpleStateMachineConfiguration.class.getName());
+      LoggerFactory.getLogger(SimpleStateMachineConfiguration.class.getName());
 
   @Override
   public void configure(StateMachineConfigurationConfigurer<String, String> config)
