@@ -14,6 +14,12 @@ import org.springframework.statemachine.guard.Guard;
 public class ForkJoinStateMachineConfiguration
     extends StateMachineConfigurerAdapter<String, String> {
 
+  private static final String SUB2_1 = "Sub2-1";
+  private static final String SUB2_2 = "Sub2-2";
+  private static final String SUB1_1 = "Sub1-1";
+  private static final String S_FORK = "SFork";
+  private static final String SUB1_2 = "Sub1-2";
+
   @Override
   public void configure(StateMachineConfigurationConfigurer<String, String> config)
       throws Exception {
@@ -22,27 +28,27 @@ public class ForkJoinStateMachineConfiguration
 
   @Override
   public void configure(StateMachineStateConfigurer<String, String> states) throws Exception {
-    states.withStates().initial("SI").fork("SFork").join("SJoin").end("SF").and().withStates()
-        .parent("SFork").initial("Sub1-1").end("Sub1-2").and().withStates().parent("SFork")
-        .initial("Sub2-1").end("Sub2-2");
+    states.withStates().initial("SI").fork(S_FORK).join("SJoin").end("SF").and().withStates()
+        .parent(S_FORK).initial(SUB1_1).end(SUB1_2).and().withStates().parent(S_FORK)
+        .initial(SUB2_1).end(SUB2_2);
   }
 
   @Override
   public void configure(StateMachineTransitionConfigurer<String, String> transitions)
       throws Exception {
-    transitions.withExternal().source("SI").target("SFork").event("E1").and().withExternal()
-        .source("Sub1-1").target("Sub1-2").event("sub1").and().withExternal().source("Sub2-1")
-        .target("Sub2-2").event("sub2").and().withFork().source("SFork").target("Sub1-1")
-        .target("Sub2-1").and().withJoin().source("Sub1-2").source("Sub2-2").target("SJoin");
+    transitions.withExternal().source("SI").target(S_FORK).event("E1").and().withExternal()
+        .source(SUB1_1).target(SUB1_2).event("sub1").and().withExternal().source(SUB2_1)
+        .target(SUB2_2).event("sub2").and().withFork().source(S_FORK).target(SUB1_1).target(SUB2_1)
+        .and().withJoin().source(SUB1_2).source(SUB2_2).target("SJoin");
   }
 
   @Bean
   public Guard<String, String> mediumGuard() {
-    return (ctx) -> false;
+    return ctx -> false;
   }
 
   @Bean
   public Guard<String, String> highGuard() {
-    return (ctx) -> false;
+    return ctx -> false;
   }
 }

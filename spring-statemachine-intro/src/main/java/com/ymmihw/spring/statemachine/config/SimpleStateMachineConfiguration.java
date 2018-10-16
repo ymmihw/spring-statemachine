@@ -18,6 +18,7 @@ import org.springframework.statemachine.guard.Guard;
 @EnableStateMachine
 public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapter<String, String> {
 
+  private static final String APPROVAL_COUNT = "approvalCount";
   public static final Logger LOGGER =
       LoggerFactory.getLogger(SimpleStateMachineConfiguration.class.getName());
 
@@ -47,7 +48,7 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
 
   @Bean
   public Guard<String, String> simpleGuard() {
-    return ctx -> (int) ctx.getExtendedState().getVariables().getOrDefault("approvalCount", 0) > 0;
+    return ctx -> (int) ctx.getExtendedState().getVariables().getOrDefault(APPROVAL_COUNT, 0) > 0;
   }
 
   @Bean
@@ -69,9 +70,9 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
   public Action<String, String> executeAction() {
     return ctx -> {
       LOGGER.info("Execute {}", ctx.getTarget().getId());
-      int approvals = (int) ctx.getExtendedState().getVariables().getOrDefault("approvalCount", 0);
+      int approvals = (int) ctx.getExtendedState().getVariables().getOrDefault(APPROVAL_COUNT, 0);
       approvals++;
-      ctx.getExtendedState().getVariables().put("approvalCount", approvals);
+      ctx.getExtendedState().getVariables().put(APPROVAL_COUNT, approvals);
     };
   }
 
