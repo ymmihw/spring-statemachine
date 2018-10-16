@@ -47,11 +47,7 @@ public class SimpleStateMachineConfiguration extends StateMachineConfigurerAdapt
 
   @Bean
   public Guard<String, String> simpleGuard() {
-    return ctx -> {
-      int approvalCount =
-          (int) ctx.getExtendedState().getVariables().getOrDefault("approvalCount", 0);
-      return approvalCount > 0;
-    };
+    return ctx -> (int) ctx.getExtendedState().getVariables().getOrDefault("approvalCount", 0) > 0;
   }
 
   @Bean
